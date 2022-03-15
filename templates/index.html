@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900"
+      rel="stylesheet"
+    />
+{% import "bootstrap/wtf.html" as wtf %}
+    <title>Task Manager</title>
+<!--
+Reflux Template
+https://templatemo.com/tm-531-reflux
+-->
+    <!-- Bootstrap core CSS -->
+    <link href="static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="static/assets/css/fontawesome.css" />
+    <link rel="stylesheet" href="static/assets/css/templatemo-style.css" />
+    <link rel="stylesheet" href="static/assets/css/owl.css" />
+    <link rel="stylesheet" href="static/assets/css/lightbox.css" />
+
+  </head>
+
+  <body>
+    <div id="page-wraper">
+      <!-- Sidebar Menu -->
+      <div class="responsive-nav">
+        <i class="fa fa-bars" id="menu-toggle"></i>
+        <div id="menu" class="menu">
+          <i class="fa fa-times" id="menu-close"></i>
+          <div class="container">
+            <div class="image">
+              <a href="#"><img src="static/assets/images/author-image.jpg" alt="" /></a>
+            </div>
+            {% if user %}
+            <div class="author-content">
+
+              <h4>{{ user.name }}</h4>
+              <span>{{ user.profession }}</span>
+            </div>
+            {% else: %}
+            <div class="author-content">
+
+              <h4>Jane Doe</h4>
+              <span>Web Developer</span>
+            </div>
+            {% endif %}
+            <nav class="main-nav" role="navigation">
+              <ul class="main-menu">
+                <li><a href="#section1">Create new post</a></li>
+
+                {% if requested_post %}
+
+
+
+            {% else: %}
+<li><a href="#section">Create new post</a></li>
+                   {% endif %}
+<li><a href="#section2">Tasks</a></li>
+
+              </ul>
+            </nav>
+
+            <div class="copyright-text">
+              <p>Copyright 2022 Shaka's Design</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="section about-me" data-section="section1">
+        <div class="container">
+          <div class="section-heading">
+            <h2>Create Task</h2>
+            <div class="line-dec"></div>
+            <form method="POST" action="/show_post">
+
+    {{post.hidden_tag()}}
+<div class="form-floating mb-3">
+  {{post.title.label(for="floatingInput")}}
+    {{post.title(class="form-control",id="floatingInput")}}
+
+</div>
+    <div class="form-floating mb-3">
+      {{post.body.label(for="floatingInput")}}
+    {{post.body(class="form-control",id="floatingInput")}}
+
+</div>
+    <br>
+    {{post.submit(class="btn btn-primary")}}
+</form>
+
+          </div>
+
+        </div>
+      </section>
+
+      <section class="section my-services" data-section="section2">
+
+          {% if requested_post %}
+
+          {% for x in requested_post %}
+        <ol class="list-group list-group-numbered">
+  <li class="list-group-item d-flex justify-content-between align-items-start" id="#located{{x.id}}">
+    <div class="ms-2 me-auto">
+      <div class="fw-bold text-dark"><h3>{{ x.title }}</h3></div>
+      <p class="text-dark">{{ x.body }}</p>
+    </div>
+      <a href="{{url_for('delete_post', post_id=x.id) }}">✘</a>
+    <span class="badge bg-primary rounded-pill">{{ x.date }}</span>
+
+  </li>
+            </ol>
+        <br>
+           {% endfor %}
+
+            {% else: %}
+            <span></span>
+            {% endif %}
+
+     </section>
+
+
+    </div>
+
+    <!-- Scripts -->
+    <!-- Bootstrap core JavaScript -->
+    <script src="static/vendor/jquery/jquery.min.js"></script>
+    <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="static/assets/js/isotope.min.js"></script>
+    <script src="static/assets/js/owl-carousel.js"></script>
+    <script src="static/assets/js/lightbox.js"></script>
+    <script src="static/assets/js/custom.js"></script>
+    <script>
+      //according to loftblog tut
+      $(".main-menu li:first").addClass("active");
+
+      var showSection = function showSection(section, isAnimate) {
+        var direction = section.replace(/#/, ""),
+          reqSection = $(".section").filter(
+            '[data-section="' + direction + '"]'
+          ),
+          reqSectionPos = reqSection.offset().top - 0;
+
+        if (isAnimate) {
+          $("body, html").animate(
+            {
+              scrollTop: reqSectionPos
+            },
+            800
+          );
+        } else {
+          $("body, html").scrollTop(reqSectionPos);
+        }
+      };
+
+      var checkSection = function checkSection() {
+        $(".section").each(function() {
+          var $this = $(this),
+            topEdge = $this.offset().top - 80,
+            bottomEdge = topEdge + $this.height(),
+            wScroll = $(window).scrollTop();
+          if (topEdge < wScroll && bottomEdge > wScroll) {
+            var currentId = $this.data("section"),
+              reqLink = $("a").filter("[href*=\\#" + currentId + "]");
+            reqLink
+              .closest("li")
+              .addClass("active")
+              .siblings()
+              .removeClass("active");
+          }
+        });
+      };
+
+      $(".main-menu").on("click", "a", function(e) {
+        e.preventDefault();
+        showSection($(this).attr("href"), true);
+      });
+
+      $(window).scroll(function() {
+        checkSection();
+      });
+    </script>
+  </body>
+</html>
